@@ -1,5 +1,7 @@
 package com.khan.tictactoe.engine.models;
 
+import android.util.Log;
+
 public class XNode extends Node {
     public XNode(Board currentBoard, int x, int y) {
         super(currentBoard, x, y);
@@ -41,6 +43,7 @@ public class XNode extends Node {
                 break;
             }
         }
+        if(flag) Log.v("X Node:", "win");
         if(flag) return win;
         //Check vertical
         flag = true;
@@ -50,6 +53,7 @@ public class XNode extends Node {
                 break;
             }
         }
+        if(flag) Log.v("X Node:", "win");
         if(flag) return win;
 
         //Check diagonals
@@ -69,6 +73,7 @@ public class XNode extends Node {
                     break;
                 }
             }
+            if(flag) Log.v("X Node:", "win");
             if(flag) return win;
         }
 
@@ -83,10 +88,13 @@ public class XNode extends Node {
             }
         }
 
+        if(flag) Log.v("X Node:", "draw");
         if(flag) return draw;
 
         ONode oNode = new ONode(moveBoard, x, y);
         children.add(oNode);
+
+        Log.v("X Node:", "continue " + x + "," + y);
 
         return oNode.getValue();
     }

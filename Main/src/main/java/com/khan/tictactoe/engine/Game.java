@@ -53,11 +53,11 @@ public class Game {
 
     private Coordinate getBestMovie() {
         Node bestNode = mCurrent.getChildren().get(0);
-        int min = bestNode.getValue().result;
+        int max = bestNode.getValue().result;
         for(Node node: mCurrent.getChildren()) {
             int current = mCurrent.getValue().result;
-            if(current < min) {
-                min = current;
+            if(current > max) {
+                max = current;
                 bestNode = node;
             }
         }
