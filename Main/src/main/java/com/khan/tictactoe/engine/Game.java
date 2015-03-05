@@ -1,5 +1,7 @@
 package com.khan.tictactoe.engine;
 
+import android.os.Handler;
+
 import com.khan.tictactoe.engine.models.*;
 import com.khan.tictactoe.interfaces.IBustListener;
 
@@ -37,28 +39,44 @@ public class Game {
         isFirstMove = true;
     }
 
-    public void move(int x, int y) {
+    public void move(final int x, final int y) {
         mBoard.getBoard()[x][y].value = (mCurrentPlayer == PLAYER_O) ? Field.VALUE_O : Field.VALUE_X;
         if(isFirstMove) {
-            mRoot = (mCurrentPlayer == PLAYER_O) ? new XNode(mBoard, x, y) : new ONode(mBoard, x, y);
-            mRoot.getValue();
-            mCurrent = mRoot;
-            isFirstMove = false;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    mRoot = (mCurrentPlayer == PLAYER_O) ? new XNode(mBoard, x, y, 0) : new ONode(mBoard, x, y, 0);
+                    mRoot.getValue();
+                    mCurrent = mRoot;
+                    isFirstMove = false;
+
+                    togglePlayer();
+                    mIBustListener.onMove(getBestMovie());
+                    togglePlayer();
+                }
+            }).start();
+
+        } else {
+            togglePlayer();
+            mIBustListener.onMove(getBestMovie());
+            togglePlayer();
         }
 
-        togglePlayer();
-        mIBustListener.onMove(getBestMovie());
-        togglePlayer();
+
     }
 
     private Coordinate getBestMovie() {
         Node bestNode = mCurrent.getChildren().get(0);
         int max = bestNode.getValue().result;
         for(Node node: mCurrent.getChildren()) {
-            int current = mCurrent.getValue().result;
-            if(current > max) {
+            int current = node.getValue().result;
+            if(current < max) {
                 max = current;
                 bestNode = node;
+            } else if (max == current) {
+                if(bestNode.getValue().percentage < node.getValue().percentage) {
+                    bestNode = node;
+                }
             }
         }
 

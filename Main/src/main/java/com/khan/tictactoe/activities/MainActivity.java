@@ -26,8 +26,13 @@ public class MainActivity extends Activity {
 
     private IBustListener mIBustListener = new IBustListener() {
         @Override
-        public void onMove(Coordinate coordinate) {
-            fields[coordinate.y][coordinate.x].setText(Game.getInstance().getCurrentSymbol());
+        public void onMove(final Coordinate coordinate) {
+            MainActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    fields[coordinate.y][coordinate.x].setText(Game.getInstance().getCurrentSymbol());
+                }
+            });
         }
     };
 

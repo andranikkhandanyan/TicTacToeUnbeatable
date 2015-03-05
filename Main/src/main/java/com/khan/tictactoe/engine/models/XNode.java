@@ -3,36 +3,42 @@ package com.khan.tictactoe.engine.models;
 import android.util.Log;
 
 public class XNode extends Node {
-    public XNode(Board currentBoard, int x, int y) {
-        super(currentBoard, x, y);
+    public XNode(Board currentBoard, int x, int y, int level) {
+        super(currentBoard, x, y, ++level);
     }
 
     private static Value tmpValue;
 
     @Override
     public Value getValue() {
+        if(mValue != null) {
+            return mValue;
+        }
         Field[][] currentFields = currentBoard.getBoard();
         int minValue = Integer.MAX_VALUE;
         int wins = 0;
         int count = 0;
+        Log.v("LEVEL", "X " + mLevel);
         for(int i = 0; i < Board.BOARD_WIDTH; i++) {
             for (int j = 0; j < Board.BOARD_HEIGHT; j++) {
                 if(currentFields[i][j].value == Field.VALUE_UNDEFINED) {
                     tmpValue = checkMove(i, j);
+                    currentFields[i][j].value = Field.VALUE_UNDEFINED;
                     minValue = Math.min(tmpValue.result, minValue);
                     count++;
                     if (tmpValue.result == 1) wins++;
                 }
             }
         }
-        return new Value(minValue, (double) wins / count);
+        mValue = new Value(minValue, (double) wins / count);
+        return mValue;
     }
 
     @Override
     protected Value checkMove(int x, int y) {
         Value win = new Value(1, 1);
         Value draw = new Value(0, 1);
-        Board moveBoard = new Board(currentBoard.getBoard());
+        Board moveBoard = currentBoard;
         Field[][] fields = moveBoard.getBoard();
         fields[x][y].value = Field.VALUE_X;
         //Check horizontal
@@ -91,7 +97,7 @@ public class XNode extends Node {
         if(flag) Log.v("X Node:", "draw");
         if(flag) return draw;
 
-        ONode oNode = new ONode(moveBoard, x, y);
+        ONode oNode = new ONode(moveBoard, x, y, mLevel);
         children.add(oNode);
 
         Log.v("X Node:", "continue " + x + "," + y);
