@@ -19,11 +19,11 @@ public class ONode extends Node {
         int wins = 0;
         int count = 0;
         Log.v("LEVEL", "O " + mLevel);
-        for(int i = 0; i < Board.BOARD_WIDTH; i++) {
-            for (int j = 0; j < Board.BOARD_HEIGHT; j++) {
-                if(currentFields[i][j].value == Field.VALUE_UNDEFINED) {
-                    tmpValue = checkMove(i, j);
-                    currentFields[i][j].value = Field.VALUE_UNDEFINED;
+        for(int y = 0; y < Board.BOARD_HEIGHT; y++) {
+            for (int x = 0; x < Board.BOARD_WIDTH; x++) {
+                if(currentFields[y][x].value == Field.VALUE_UNDEFINED) {
+                    tmpValue = checkMove(x, y);
+                    currentFields[y][x].value = Field.VALUE_UNDEFINED;
                     maxValue = Math.max(tmpValue.result, maxValue);
                     count++;
                     if (tmpValue.result == -1) wins++;
@@ -35,60 +35,67 @@ public class ONode extends Node {
     }
 
     @Override
-    protected Value checkMove(int x, int y) {
+    protected Value checkMove(int pX, int pY) {
         Value win = new Value(-1, 1);
         Value draw = new Value(0, 1);
         Board moveBoard = currentBoard;
         Field[][] fields = moveBoard.getBoard();
-        fields[x][y].value = Field.VALUE_O;
+        fields[pY][pX].value = Field.VALUE_O;
         //Check horizontal
         boolean flag = true;
-        for(int i = 0; i < Board.BOARD_WIDTH; i++) {
-            if(fields[i][y].value != Field.VALUE_O) {
+        for(int x = 0; x < Board.BOARD_WIDTH; x++) {
+            if(fields[pY][x].value != Field.VALUE_O) {
                 flag = false;
                 break;
             }
         }
-        if(flag) Log.v("O Node:", "win");
+        if(flag) Log.v("O Node:", "win horz.");
         if(flag) return win;
         //Check vertical
         flag = true;
-        for(int j = 0; j < Board.BOARD_HEIGHT; j++) {
-            if(fields[x][j].value != Field.VALUE_O) {
+        for(int y = 0; y < Board.BOARD_HEIGHT; y++) {
+            if(fields[y][pX].value != Field.VALUE_O) {
                 flag = false;
                 break;
             }
         }
-        if(flag) Log.v("O Node:", "win");
+        if(flag) Log.v("O Node:", "win vert");
         if(flag) return win;
 
         //Check diagonals
-        if(x == y) {
+        if(pX == pY) {
             flag = true;
-            for(int i = 0; i < Board.BOARD_WIDTH; i++) {
-                if(fields[i][i].value != Field.VALUE_O) {
+            for (int x = 0; x < Board.BOARD_WIDTH; x++) { //just using x as diagonal condition
+                if (fields[x][x].value != Field.VALUE_O) {//because x=y;
                     flag = false;
                     break;
                 }
             }
-            if(flag) Log.v("O Node:", "win");
-            if(flag) return win;
-            flag = true;
-            for(int j = Board.BOARD_WIDTH - 1; j >= 0; j--) {
-                if(fields[j][j].value != Field.VALUE_O) {
-                    flag = false;
-                    break;
-                }
-            }
-            if(flag) Log.v("O Node:", "win");
-            if(flag) return win;
+            if (flag) Log.v("0 Node:", "win diag1");
+            if (flag) return win;
         }
+
+        //check other diagonal
+        flag = true;
+//        int tmpX = pX;
+//        int tmpY = pY;
+//        for(int x = 0; x < Board.BOARD_WIDTH; x++) { //just using x as diagonal condition
+//            tmpX = Math.abs(--tmpX);
+//            tmpY = Math.abs(--tmpY);
+//            if(fields[tmpY][tmpX].value != Field.VALUE_O) {
+//                flag = false;
+//                break;
+//            }
+//        }
+        flag = (fields[0][2].value == Field.VALUE_O && fields[1][1].value == Field.VALUE_O && fields[2][0].value == Field.VALUE_O);
+        if(flag) Log.v("0 Node:", "win diag");
+        if(flag) return win;
 
         //Check for all fields filled (draw if there are no win before)
         flag = true;
-        for(int i = 0; i < Board.BOARD_WIDTH; i++) {
-            for (int j = 0; j < Board.BOARD_HEIGHT; j++) {
-                if(fields[i][j].value == Field.VALUE_UNDEFINED) {
+        for(int y = 0; y < Board.BOARD_HEIGHT; y++) {
+            for (int x = 0; x < Board.BOARD_WIDTH; x++) {
+                if(fields[y][x].value == Field.VALUE_UNDEFINED) {
                     flag = false;
                     break;
                 }
@@ -98,10 +105,10 @@ public class ONode extends Node {
         if(flag) Log.v("O Node:", "draw");
         if(flag) return draw;
 
-        XNode xNode = new XNode(moveBoard, x, y, mLevel);
+        XNode xNode = new XNode(new Board(fields), pX, pY, mLevel);
         children.add(xNode);
 
-        Log.v("O Node:", "continue " + x + ", " + y);
+        Log.v("O Node:", "continue " + pX + ", " + pY);
 
         return xNode.getValue();
     }

@@ -31,6 +31,7 @@ public class MainActivity extends Activity {
                 @Override
                 public void run() {
                     fields[coordinate.y][coordinate.x].setText(Game.getInstance().getCurrentSymbol());
+                    Game.getInstance().togglePlayer();
                 }
             });
         }
@@ -51,21 +52,21 @@ public class MainActivity extends Activity {
 
     private void initView() {
         ViewGroup root = (ViewGroup) findViewById(R.id.root);
-        for(int i = 0; i < root.getChildCount(); i++) {
-            ViewGroup line = (ViewGroup)root.getChildAt(i);
-            for (int j = 0; j < line.getChildCount(); j++) {
-                TextView field = (TextView)line.getChildAt(j);
-                fields[i][j] = field;
+        for(int y = 0; y < root.getChildCount(); y++) { // y
+            ViewGroup line = (ViewGroup)root.getChildAt(y);
+            for (int x = 0; x < line.getChildCount(); x++) { // x
+                TextView field = (TextView)line.getChildAt(x);
+                fields[y][x] = field;
                 field.setOnClickListener(mOnClickListener);
-                field.setTag(i + "_" + j);
+                field.setTag(y + "_" + x);
             }
         }
     }
 
     private Coordinate getCoordinateFromView(String s) {
         String[] parts = s.split("_");
-        int x = Integer.parseInt(parts[1]);
         int y = Integer.parseInt(parts[0]);
+        int x = Integer.parseInt(parts[1]);
         return new Coordinate(x, y);
     }
 }

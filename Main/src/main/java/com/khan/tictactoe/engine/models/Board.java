@@ -23,6 +23,20 @@ public class Board {
 
     }
 
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int y = 0; y < BOARD_HEIGHT; y++) {
+            for (int x = 0; x < BOARD_WIDTH; x++) {
+                stringBuilder.append(board[y][x].value);
+                stringBuilder.append(" ");
+            }
+            stringBuilder.append("\n");
+        }
+
+        return stringBuilder.toString();
+    }
+
     public Field[][] getBoard() {
         return board;
     }

@@ -12,13 +12,13 @@ public abstract class Node {
     protected ArrayList<Node> children;
     protected Board currentBoard;
     protected int mLevel;
-    public final int x;
-    public final int y;
+    public final int mX;
+    public final int mY;
 
     public Node(Board currentBoard, int x, int y, int level) {
         this.currentBoard = currentBoard;
-        this.x = x;
-        this.y = y;
+        this.mX = x;
+        this.mY = y;
         children = new ArrayList<Node>();
         mLevel = level;
     }
