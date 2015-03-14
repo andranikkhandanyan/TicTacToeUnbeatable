@@ -8,4 +8,9 @@ public class Value {
         this.result = result;
         this.percentage = percentage;
     }
+
+    @Override
+    public String toString() {
+        return "r: " + result + ", p: " + percentage;
+    }
 }

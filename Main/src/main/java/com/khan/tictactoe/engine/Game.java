@@ -17,6 +17,7 @@ public class Game {
     private int mCurrentPlayer;
     private boolean isFirstMove;
     private IBustListener mIBustListener;
+    private boolean isStarted;
 
     private static final String TAG = Game.class.getSimpleName();
 
@@ -34,6 +35,7 @@ public class Game {
     }
 
     public void start(int which) {
+        isStarted = true;
         mCurrentPlayer = which;
         mBoard = new Board();
         isFirstMove = true;
@@ -59,30 +61,52 @@ public class Game {
             }).start();
 
         } else {
-            togglePlayer();
-            mIBustListener.onMove(getBestMovie());
+            if(isStarted) {
+                togglePlayer();
+                makeUserStep(x, y);
+            }
+            if (isStarted) {
+                mIBustListener.onMove(getBestMovie());
+            }
         }
-
-
     }
 
     private Coordinate getBestMovie() {
-         Node bestNode = mCurrent.getChildren().get(0);
-        int max = bestNode.getValue().result;
-        for(Node node: mCurrent.getChildren()) {
+        INode bestNode = mCurrent.getChildren().get(0);
+        int min = bestNode.getValue().result;
+        for(INode node: mCurrent.getChildren()) {
             int current = node.getValue().result;
-            if(current < max) {
-                max = current;
+            if(current < min) {
+                min = current;
                 bestNode = node;
-            } else if (max == current) {
-                if(bestNode.getValue().percentage < node.getValue().percentage) {
+            } else if (min == current) {
+                if(bestNode.getValue().percentage > node.getValue().percentage) {
                     bestNode = node;
                 }
             }
         }
 
-        mCurrent = bestNode;
-        return new Coordinate(mCurrent.mX, mCurrent.mY);
+        if (bestNode instanceof Node) {
+            mCurrent = (Node)bestNode;
+        } else {
+            gameOver(bestNode);
+            mCurrent = null;
+        }
+        return new Coordinate(bestNode.getX(), bestNode.getY());
+    }
+
+    public void makeUserStep(int x, int y) {
+        for(INode node: mCurrent.getChildren()) {
+            if(node.getX() == x && node.getY() == y) {
+                if (node instanceof Node) {
+                    mCurrent = (Node)node;
+                } else {
+                    gameOver(node);
+                    mCurrent = null;
+                }
+                break;
+            }
+        }
     }
 
     public void togglePlayer() {
@@ -95,5 +119,12 @@ public class Game {
 
     public void setIBustListener(IBustListener IBustListener) {
         mIBustListener = IBustListener;
+    }
+
+    private void gameOver(INode node) {
+        int state = (node.getValue().result == 0) ? IBustListener.DRAW : IBustListener.WIN;
+        String player = (mCurrentPlayer == PLAYER_1) ? "Player 1 " : "Player 2";
+        mIBustListener.onGameOver(state, player);
+        isStarted = false;
     }
 }

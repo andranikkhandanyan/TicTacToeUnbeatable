@@ -38,6 +38,8 @@ public class XNode extends Node {
     protected Value checkMove(int pX, int pY) {
         Value win = new Value(1, 1);
         Value draw = new Value(0, 1);
+        State winState = new State(pX, pY, win);
+        State drawState = new State(pX, pY, draw);
         Board moveBoard = currentBoard;
         Field[][] fields = moveBoard.getBoard();
         fields[pY][pX].value = Field.VALUE_X;
@@ -49,8 +51,10 @@ public class XNode extends Node {
                 break;
             }
         }
-        if(flag) Log.v("X Node:", "win horz");
-        if(flag) return win;
+        if(flag) {
+            children.add(winState);
+            return win;
+        }
         //Check vertical
         flag = true;
         for(int y = 0; y < Board.BOARD_HEIGHT; y++) {
@@ -59,8 +63,10 @@ public class XNode extends Node {
                 break;
             }
         }
-        if(flag) Log.v("X Node:", "win vert");
-        if(flag) return win;
+        if(flag) {
+            children.add(winState);
+            return win;
+        }
 
         //Check diagonals
         if(pX == pY) {
@@ -71,8 +77,10 @@ public class XNode extends Node {
                     break;
                 }
             }
-            if (flag) Log.v("X Node:", "win diag 1");
-            if (flag) return win;
+            if(flag) {
+                children.add(winState);
+                return win;
+            }
         }
 
         //check other diagonal
@@ -89,8 +97,10 @@ public class XNode extends Node {
 //            }
 //        }
         flag = (fields[0][2].value == Field.VALUE_X && fields[1][1].value == Field.VALUE_X && fields[2][0].value == Field.VALUE_X);
-        if(flag) Log.v("X Node:", "win diag");
-        if(flag) return win;
+        if(flag) {
+            children.add(winState);
+            return win;
+        }
 
         //Check for all fields filled (draw if there are no win before)
         flag = true;
@@ -103,13 +113,13 @@ public class XNode extends Node {
             }
         }
 
-        if(flag) Log.v("X Node:", "draw");
-        if(flag) return draw;
+        if(flag) {
+            children.add(drawState);
+            return draw;
+        }
 
         ONode oNode = new ONode(new Board(fields), pX, pY, mLevel);
         children.add(oNode);
-
-        Log.v("X Node:", "continue " + pX + "," + pY);
 
         return oNode.getValue();
     }

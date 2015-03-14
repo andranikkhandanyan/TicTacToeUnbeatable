@@ -1,72 +1,84 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="${packageName}.${activityClass}">
 
     <LinearLayout
+        android:id="@+id/root"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            style="@style/Field"
-            tools:text="X"/>
-        <TextView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            style="@style/Field"
-            tools:text="X"/>
-        <TextView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            style="@style/Field"
-            tools:text="X"/>
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                style="@style/Field"
+                tools:text="X"/>
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                style="@style/Field"
+                tools:text="X"/>
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                style="@style/Field"
+                tools:text="X"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                style="@style/Field"
+                tools:text="X"/>
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                style="@style/Field"
+                tools:text="O"/>
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                style="@style/Field"
+                tools:text="O"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                style="@style/Field"
+                tools:text="O"/>
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                style="@style/Field"
+                tools:text="X"/>
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                style="@style/Field"
+                tools:text="O"/>
+        </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <Button
+        android:id="@+id/replay"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            style="@style/Field"
-            tools:text="X"/>
-        <TextView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            style="@style/Field"
-            tools:text="O"/>
-        <TextView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            style="@style/Field"
-            tools:text="O"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            style="@style/Field"
-            tools:text="O"/>
-        <TextView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            style="@style/Field"
-            tools:text="X"/>
-        <TextView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            style="@style/Field"
-            tools:text="O"/>
-    </LinearLayout>
+        android:text="Replay"/>
 
 </LinearLayout>
