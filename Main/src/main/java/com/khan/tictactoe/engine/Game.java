@@ -74,15 +74,23 @@ public class Game {
     private Coordinate getBestMovie() {
         INode bestNode = mCurrent.getChildren().get(0);
         int min = bestNode.getValue().result;
+        int minEval = evaluate(mCurrent.getBoard());
         for(INode node: mCurrent.getChildren()) {
             int current = node.getValue().result;
+            int currentEval = evaluate(node.getBoard());
             if(current < min) {
                 min = current;
                 bestNode = node;
+                minEval = currentEval;
             } else if (min == current) {
-                if(bestNode.getValue().percentage > node.getValue().percentage) {
+                if (currentEval < minEval) {
+                    min = current;
                     bestNode = node;
+                    minEval = currentEval;
                 }
+//                if(bestNode.getValue().percentage > node.getValue().percentage) {
+//                    bestNode = node;
+//                }
             }
         }
 
@@ -126,5 +134,78 @@ public class Game {
         String player = (mCurrentPlayer == PLAYER_1) ? "Player 1 " : "Player 2";
         mIBustListener.onGameOver(state, player);
         isStarted = false;
+    }
+
+    /** The heuristic evaluation function for the current board
+     @return +100, +10, +1 for EACH 3-, 2-, 1-in-a-line for computer.
+     -100, -10, -1 for EACH 3-, 2-, 1-in-a-line for opponent.
+     0 otherwise   */
+    private int evaluate(Board board) {
+        int score = 0;
+        // Evaluate score for each of the 8 lines (3 rows, 3 columns, 2 diagonals)
+        score += evaluateLine(board, 0, 0, 0, 1, 0, 2);  // row 0
+        score += evaluateLine(board, 1, 0, 1, 1, 1, 2);  // row 1
+        score += evaluateLine(board, 2, 0, 2, 1, 2, 2);  // row 2
+        score += evaluateLine(board, 0, 0, 1, 0, 2, 0);  // col 0
+        score += evaluateLine(board, 0, 1, 1, 1, 2, 1);  // col 1
+        score += evaluateLine(board, 0, 2, 1, 2, 2, 2);  // col 2
+        score += evaluateLine(board, 0, 0, 1, 1, 2, 2);  // diagonal
+        score += evaluateLine(board, 0, 2, 1, 1, 2, 0);  // alternate diagonal
+        return score;
+    }
+
+    /** The heuristic evaluation function for the given line of 3 cells
+     @return +100, +10, +1 for 3-, 2-, 1-in-a-line for computer.
+     -100, -10, -1 for 3-, 2-, 1-in-a-line for opponent.
+     0 otherwise */
+    private int evaluateLine(Board board, int row1, int col1, int row2, int col2, int row3, int col3) {
+        int score = 0;
+        Field[][] cells = board.getBoard();
+
+        // First cell
+        if (cells[col1][row1].value == Field.VALUE_X) {
+            score = 1;
+        } else if (cells[col1][row1].value == Field.VALUE_O) {
+            score = -1;
+        }
+
+        // Second cell
+        if (cells[col2][row2].value == Field.VALUE_X) {
+            if (score == 1) {   // cell1 is mySeed
+                score = 10;
+            } else if (score == -1) {  // cell1 is oppSeed
+                return 0;
+            } else {  // cell1 is empty
+                score = 1;
+            }
+        } else if (cells[col2][row2].value == Field.VALUE_O) {
+            if (score == -1) { // cell1 is oppSeed
+                score = -10;
+            } else if (score == 1) { // cell1 is mySeed
+                return 0;
+            } else {  // cell1 is empty
+                score = -1;
+            }
+        }
+
+        // Third cell
+        if (cells[col3][row3].value == Field.VALUE_X) {
+            if (score > 0) {  // cell1 and/or cell2 is mySeed
+                score *= 10;
+            } else if (score < 0) {  // cell1 and/or cell2 is oppSeed
+                return 0;
+            } else {  // cell1 and cell2 are empty
+                score = 1;
+            }
+        } else if (cells[col3][row3].value == Field.VALUE_O) {
+            if (score < 0) {  // cell1 and/or cell2 is oppSeed
+                score *= 10;
+            } else if (score > 1) {  // cell1 and/or cell2 is mySeed
+                return 0;
+            } else {  // cell1 and cell2 are empty
+                score = -1;
+            }
+        }
+        return score;
     }
 }

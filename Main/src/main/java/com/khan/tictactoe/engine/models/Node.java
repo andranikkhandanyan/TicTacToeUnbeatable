@@ -40,4 +40,9 @@ public abstract class Node implements INode {
     public int getY() {
         return mY;
     }
+
+    @Override
+    public Board getBoard() {
+        return currentBoard;
+    }
 }

@@ -38,11 +38,13 @@ public class ONode extends Node {
     protected Value checkMove(int pX, int pY) {
         Value win = new Value(-1, 1);
         Value draw = new Value(0, 1);
-        State winState = new State(pX, pY, win);
-        State drawState = new State(pX, pY, draw);
         Board moveBoard = currentBoard;
         Field[][] fields = moveBoard.getBoard();
         fields[pY][pX].value = Field.VALUE_O;
+
+        State winState = new State(pX, pY, win, new Board(fields));
+        State drawState = new State(pX, pY, draw, new Board(fields));
+
         //Check horizontal
         boolean flag = true;
         for(int x = 0; x < Board.BOARD_WIDTH; x++) {

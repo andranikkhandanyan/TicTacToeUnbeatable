@@ -4,4 +4,5 @@ public interface INode {
     Value getValue();
     int getX();
     int getY();
+    Board getBoard();
 }
