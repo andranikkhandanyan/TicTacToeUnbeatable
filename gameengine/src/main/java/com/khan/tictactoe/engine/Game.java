@@ -1,7 +1,5 @@
 package com.khan.tictactoe.engine;
 
-import android.util.Log;
-
 import com.khan.tictactoe.engine.models.*;
 import com.khan.tictactoe.interfaces.IBustListener;
 
@@ -47,7 +45,6 @@ public class Game {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    Log.v(TAG, "thread started");
                     mRoot = (mCurrentPlayer == PLAYER_O) ? new XNode(mBoard, x, y, 0) : new ONode(mBoard, x, y, 0);
                     mRoot.getValue();
                     togglePlayer();
@@ -55,8 +52,6 @@ public class Game {
                     isFirstMove = false;
 
                     mIBustListener.onMove(getBestMovie());
-
-                    Log.v(TAG, "thread completed");
                 }
             }).start();
 
