@@ -1,1 +1,1 @@
-include ':Main', ':gameengine'
+include ':Main', ':gameengine', ':rxclient', ':shared'
