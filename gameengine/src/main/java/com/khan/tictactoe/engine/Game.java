@@ -52,14 +52,16 @@ public class Game {
         if (player != currentPlayer) {
             throw new IllegalArgumentException("Wrong player");
         }
-        if (board.getFields()[row][column].value == Seed.EMPTY) {
-            board.getFields()[row][column].value = currentPlayer;
-            board.currentRow = row;
-            board.currentColumn = column;
-            updateGame(currentPlayer);
-            togglePlayer();
-            if (currentState != GameState.PLAYING) {
-                mIBustListener.onGameOver(currentState);
+        if (currentState == GameState.PLAYING) {
+            if (board.getFields()[row][column].value == Seed.EMPTY) {
+                board.getFields()[row][column].value = currentPlayer;
+                board.currentRow = row;
+                board.currentColumn = column;
+                updateGame(currentPlayer);
+                togglePlayer();
+                if (currentState != GameState.PLAYING) {
+                    mIBustListener.onGameOver(currentState);
+                }
             }
         }
     }
@@ -102,5 +104,9 @@ public class Game {
 
     public Seed getCurrentPlayer() {
         return currentPlayer;
+    }
+
+    public GameState getCurrentState() {
+        return currentState;
     }
 }

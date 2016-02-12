@@ -19,19 +19,21 @@ public class MainActivity extends Activity {
     private View.OnClickListener mOnFieldClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            TextView field = (TextView) view;
-            Coordinate coordinate = getCoordinateFromView((String)field.getTag());
-            String symbol = "";
-            switch (mGame.getCurrentPlayer()) {
-                case CROSS:
-                    symbol = "X";
-                    break;
-                case NOUGHT:
-                    symbol = "0";
-                    break;
+            if (mGame.getCurrentState() == GameState.PLAYING) {
+                TextView field = (TextView) view;
+                Coordinate coordinate = getCoordinateFromView((String) field.getTag());
+                String symbol = "";
+                switch (mGame.getCurrentPlayer()) {
+                    case CROSS:
+                        symbol = "X";
+                        break;
+                    case NOUGHT:
+                        symbol = "0";
+                        break;
+                }
+                field.setText(symbol);
+                mGame.playerMove(coordinate.row, coordinate.column);
             }
-            field.setText(symbol);
-            mGame.playerMove(coordinate.row, coordinate.column);
         }
     };
 
