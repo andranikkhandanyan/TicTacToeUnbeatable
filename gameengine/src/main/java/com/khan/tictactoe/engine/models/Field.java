@@ -1,19 +1,32 @@
 package com.khan.tictactoe.engine.models;
 
+import com.khan.tictactoe.engine.Seed;
+
 public class Field {
+    public final int row;
+    public final int column;
 
-    public static final int VALUE_UNDEFINED = -1;
-    public static final int VALUE_O = 0;
-    public static final int VALUE_X = 1;
+    public Seed value;
 
-    public final int x;
-    public final int y;
+    public Field(int row, int column) {
+        this.row = row;
+        this.column = column;
+        clear();
+    }
 
-    public int value;
+    public void clear() {
+        value = Seed.EMPTY;
+    }
 
-    public Field(int x, int y) {
-        this.x = x;
-        this.y = y;
-        value = VALUE_UNDEFINED;
+    @Override
+    public String toString() {
+        String rv = "";
+        switch (value) {
+            case CROSS:  rv = " X "; break;
+            case NOUGHT: rv = " X "; break;
+            case EMPTY:  rv = " X "; break;
+        }
+
+        return rv;
     }
 }
