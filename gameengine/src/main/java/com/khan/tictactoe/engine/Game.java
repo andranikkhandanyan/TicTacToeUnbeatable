@@ -74,9 +74,10 @@ public class Game {
                     AIPlayer aiPlayer = new AIPlayerMinimax(board);
                     aiPlayer.setSeed(currentPlayer);
                     int[] result = aiPlayer.move();
-                    Coordinate coordinate = new Coordinate(result[0], result[1]);
-                    move(currentPlayer, coordinate.row, coordinate.column);
-                    mIBustListener.onAIMove(coordinate);
+                    int row = result[0];
+                    int col = result[1];
+                    mIBustListener.onAIMove(row, col, currentPlayer);
+                    move(currentPlayer, row, col);
                 }
             }).start();
         }

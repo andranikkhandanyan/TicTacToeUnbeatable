@@ -3,34 +3,24 @@ package com.ando.rxclient;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.khan.tictactoe.engine.Game;
 import com.khan.tictactoe.engine.GameState;
 import com.khan.tictactoe.engine.Seed;
-import com.khan.tictactoe.engine.models.Coordinate;
 import com.khan.tictactoe.interfaces.IBustListener;
+import com.khan.tictactoe.shared.widget.FieldView;
+import com.khan.tictactoe.shared.widget.FieldsContainerView;
 
 public class MainActivity extends Activity {
-
-    private View.OnClickListener mOnFieldClickListener = new View.OnClickListener() {
+    private FieldsContainerView.OnFieldClickListener mOnFieldClickListener = new FieldsContainerView.OnFieldClickListener() {
         @Override
-        public void onClick(View view) {
-            TextView field = (TextView) view;
-            Coordinate coordinate = getCoordinateFromView((String)field.getTag());
-            String symbol = "";
-            switch (mGame.getCurrentPlayer()) {
-                case CROSS:
-                    symbol = "X";
-                    break;
-                case NOUGHT:
-                    symbol = "0";
-                    break;
+        public void onClicked(int row, int col, FieldView fieldView) {
+            if (mGame.getCurrentState() == GameState.PLAYING && fieldView.isAvailable()) {
+                FieldView.Value symbol = getSymbol(mGame.getCurrentPlayer());
+                fieldView.setValue(symbol);
+                mGame.playerMove(row, col);
             }
-            field.setText(symbol);
-            mGame.playerMove(coordinate.row, coordinate.column);
         }
     };
 
@@ -47,8 +37,8 @@ public class MainActivity extends Activity {
 
     private IBustListener mIBustListener = new IBustListener() {
         @Override
-        public void onAIMove(final Coordinate coordinate) {
-            handleAIMove(coordinate);
+        public void onAIMove(int row, int col, Seed seed) {
+            handleAIMove(row, col, seed);
         }
 
         @Override
@@ -57,53 +47,33 @@ public class MainActivity extends Activity {
         }
     };
 
-    private TextView[][] fields = new TextView[3][3];
+    private FieldsContainerView mFieldsContainerView;
     private Game mGame;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initView();
 
-        findViewById(R.id.replay).setOnClickListener(mOnClickListener);
         mGame = Game.getInstance();
         mGame.setIBustListener(mIBustListener);
         replay();
     }
 
     private void initView() {
-        ViewGroup root = (ViewGroup) findViewById(R.id.root);
-        for(int y = 0; y < root.getChildCount(); y++) { // column
-            ViewGroup line = (ViewGroup)root.getChildAt(y);
-            for (int x = 0; x < line.getChildCount(); x++) { // row
-                TextView field = (TextView)line.getChildAt(x);
-                field.setText("");
-                fields[y][x] = field;
-                field.setOnClickListener(mOnFieldClickListener);
-                field.setTag(y + "_" + x);
-            }
-        }
+        mFieldsContainerView = (FieldsContainerView) findViewById(R.id.fields_container);
+        mFieldsContainerView.setOnFieldClickListener(mOnFieldClickListener);
+        findViewById(R.id.replay).setOnClickListener(mOnClickListener);
     }
 
     private void replay() {
-        initView();
+        mFieldsContainerView.reset();
         mGame.start(Seed.CROSS);
     }
 
-    private Coordinate getCoordinateFromView(String s) {
-        String[] parts = s.split("_");
-        int y = Integer.parseInt(parts[0]);
-        int x = Integer.parseInt(parts[1]);
-        return new Coordinate(x, y);
-    }
-
-    private void handleAIMove(final Coordinate coordinate) {
-        MainActivity.this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                fields[coordinate.column][coordinate.row].setText(getSymbol(mGame.getCurrentPlayer()));
-            }
-        });
+    private void handleAIMove(final int row, final int col, final Seed seed) {
+        mFieldsContainerView.getField(row, col).setValue(getSymbol(seed));
     }
 
     private void handleGameOver(final GameState gameState) {
@@ -127,14 +97,14 @@ public class MainActivity extends Activity {
         });
     }
 
-    private String getSymbol(Seed seed) {
-        String symbol = "";
+    private FieldView.Value getSymbol(Seed seed) {
+        FieldView.Value symbol = FieldView.Value.EMPTY;
         switch (seed) {
             case CROSS:
-                symbol = "0";
+                symbol = FieldView.Value.CROSS;
                 break;
             case NOUGHT:
-                symbol = "X";
+                symbol = FieldView.Value.NOUGHT;
                 break;
         }
 
